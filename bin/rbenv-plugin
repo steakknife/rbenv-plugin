@@ -2,7 +2,7 @@
 
 list() {
   echo "rbenv plugins:"
-  ls -1 "$RBENV_ROOT/plugins" | tr '\n' '\0' | xargs -0 -n 1 basename | sed -e 's/^rbenv-//g'
+  ls -1 "$RBENV_PLUGINS_ROOT" | tr '\n' '\0' | xargs -0 -n 1 basename | sed -e 's/^rbenv-//g'
 }
 
 add() {
@@ -13,13 +13,13 @@ add() {
     echo "Cannot detect plugin name" >&2
     exit 1
   fi
-  git clone "$URL" "$RBENV_ROOT/plugins/$NAME"
+  git clone "$URL" "$RBENV_PLUGINS_ROOT/$NAME"
 }
 
 rm() {
   NAME="$1"
   [ "$NAME" = 'ruby-build' ] || NAME="rbenv-$NAME"
-  rm -rf "$RBENV_ROOT/$NAME"
+  rm -rf "$RBENV_PLUGINS_ROOT/$NAME" || { echo "Cannot delete rbenv plugin $1" >&2 ; exit 1 }
   echo "Deleted rbenv plugin $1"
 }
 
@@ -33,4 +33,5 @@ EOF
 
 COMMAND="$1" ; shift
 [ -z "$RBENV_ROOT" ] && RBENV_ROOT="$(cd ~/.rbenv/plugins ; pwd)"
+RBENV_PLUGINS_ROOT="$RBENV_ROOT/plugins"
 $COMMAND "$@"
