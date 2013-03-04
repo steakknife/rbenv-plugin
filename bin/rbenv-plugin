@@ -22,9 +22,15 @@ add() {
 
 rm() {
   NAME="$1"
-  [ "$NAME" = 'ruby-build' ] || NAME="rbenv-$NAME"
-  if [ "$NAME" = "update" ]; then
-    echo "Cannot delete update plugin" >&2
+  if [ "$NAME" != 'ruby-build' ]; then
+    NAME="rbenv-$NAME"
+  fi
+  if [ "$NAME" = "plugin" ]; then
+    echo "Cannot delete rbenv-plugin" >&2
+    exit 1
+  fi
+  if [ ! -d "$RBENV_PLUGINS_ROOT/$NAME" ]; then
+    echo "rbenv plugin $NAME not found" >&2
     exit 1
   fi
   if ! rm -rf "$RBENV_PLUGINS_ROOT/$NAME"; then
