@@ -34,7 +34,7 @@ rm() {
     exit 1
   fi
   rm -rf "$RBENV_PLUGINS_ROOT/$NAME"
-  if ! $?
+  if ! $?; then
     echo "Cannot delete rbenv plugin $1" >&2
     exit 1
   fi
