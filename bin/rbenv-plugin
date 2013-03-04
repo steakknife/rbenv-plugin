@@ -1,34 +1,34 @@
-#!/usr/bin/env ruby
-#/ usage: rbenv plugin [add|list|rm|help]
-#/
-#/ Manages plugins by adding, deleting and listing them.
+#!/bin/sh -e
 
-require 'boson/runner'
-require 'fileutils'
+list() {
+  echo "rbenv plugins:"
+  ls -1 "$RBENV_ROOT/plugins" | tr '\n' '\0' | xargs -0 -n 1 basename | sed -e 's/^rbenv-//g'
+}
 
-class PluginRunner < Boson::Runner
-  desc 'List rbenv plugins'
-  def list
-    puts Dir[root + '/plugins/*'].map {|f| File.basename(f).sub('rbenv-', '') }
-  end
+add() {
+  URL="$1"
+  echo "$URL" | egrep -qs '^(git|http)' || URL="https://github.com/$URL"
+  NAME="$(echo $URL | sed 's/.*rbenv-\([^\.]*\).*/\1/;s/.*\(ruby-build\).*/ruby-build/')  
+  if [ "$NAME" = "$URL" ]; then
+    echo "Cannot detect plugin name" >&2
+    exit 1
+  fi
+  git clone "$URL" "$RBENV_ROOT/$NAME"
+}
 
-  desc 'Add a plugin'
-  def add(url)
-    url = "http://github.com/#{url}" unless url[/^(git|http)/]
-    name = url[%r</(rbenv-\w+)>, 1] or abort "Can't detect plugin name"
-    system("git clone #{url} #{root}/plugins/#{name}")
-  end
+rm() {
+  NAME="$1"
+  [ "$NAME" = 'ruby-build' ] || NAME="rbenv-$NAME"
+  rm -rf "$RBENV_ROOT/$NAME"
+  echo "Deleted rbenv plugin $1"
+}
 
-  desc 'Remove a plugin'
-  def rm(name)
-    FileUtils.rm_rf("#{root}/plugins/rbenv-#{name}")
-    puts "Deleted #{name} plugin"
-  end
+help() {
+  rbenv plugin list        list plugins
+  rbenv plugin add   url   add plugin  
+  rbenv plugin rm  plugin  remove plugin  
+}
 
-  private
-  def root
-    ENV['RBENV_ROOT'] ||= '~/.rbenv'
-  end
-end
-
-PluginRunner.start
+COMMAND="$1" ; shift
+[ -z "$RBENV_ROOT" ] && RBENV_ROOT="$(cd ~/.rbenv/plugins ; pwd)"
+$COMMAND "$@"
