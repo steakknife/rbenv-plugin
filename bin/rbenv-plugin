@@ -30,7 +30,7 @@ rm() {
   fi
   [ "$PLUGIN_NAME" = "plugin" ] && die "Cannot delete rbenv-plugin" 
   [ ! -d "$RBENV_PLUGINS_ROOT/$PLUGIN_NAME" ] && die "rbenv plugin $PLUGIN_NAME not found" 
-  \rm -rf "$RBENV_PLUGINS_ROOT/$PLUGIN_NAME" || die "Cannot delete rbenv plugin $1" >&2
+  /bin/rm -rf "$RBENV_PLUGINS_ROOT/$PLUGIN_NAME" || die "Cannot delete rbenv plugin $1" >&2
   echo "Deleted rbenv plugin $1"
 }
 
