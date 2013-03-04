@@ -2,43 +2,35 @@
 
 list() {
   echo "rbenv plugins:"
+  echo ""
   ls -1 "$RBENV_PLUGINS_ROOT" | tr '\n' '\0' | xargs -0 -n 1 basename | sed -e 's/^rbenv-//g;/^plugin$/d'
+  echo ""
+}
+
+die() {
+  echo "$@" >&2
+  exit 1
 }
 
 add() {
   URL="$1"
   echo "$URL" | egrep -qs '^(git|http)' || URL="https://github.com/$URL"
   PLUGIN_NAME="$(echo $URL | sed 's/.*\(rbenv-[^\.]*\).*/\1/;s/.*\(ruby-build\).*/ruby-build/')"
-  if [ "$PLUGIN_NAME" = "update" ]; then
-    echo "Cannot overwrite update plugin" >&2
-    exit 1
-  fi
-  if [ "$PLUGIN_NAME" = "$URL" ]; then
-    echo "Cannot detect plugin name" >&2
-    exit 1
-  fi
+  [ "$PLUGIN_NAME" = "update" ] && die "Cannot overwrite update plugin"
+  [ "$PLUGIN_NAME" = "$URL" ]   && die "Cannot detect plugin name"
   git clone "$URL" "$RBENV_PLUGINS_ROOT/$PLUGIN_NAME"
 }
 
 rm() {
   PLUGIN_NAME="$1"
-  if [ "$NAME" != 'ruby-build' ]; then
-    PLUGIN_NAME="rbenv-$NAME"
+  [ -z "$PLUGIN_NAME" ] && die "rbenv rm missing plugin name"
+
+  if [ "$PLUGIN_NAME" != 'ruby-build' ]; then
+    PLUGIN_NAME="rbenv-$PLUGIN_NAME"
   fi
-  if [ "$PLUGIN_NAME" = "plugin" ]; then
-    echo "Cannot delete rbenv-plugin" >&2
-    exit 1
-  fi
-  if [ ! -d "$RBENV_PLUGINS_ROOT/$PLUGIN_NAME" ]; then
-    echo "PLUGIN_NAME=$PLUGIN_NAME"
-    echo "rbenv plugin $PLUGIN_NAME not found" >&2
-    exit 1
-  fi
-  \rm -rf "$RBENV_PLUGINS_ROOT/$PLUGIN_NAME"
-  if ! $?; then
-    echo "Cannot delete rbenv plugin $1" >&2
-    exit 1
-  fi
+  [ "$PLUGIN_NAME" = "plugin" ] && die "Cannot delete rbenv-plugin" 
+  [ ! -d "$RBENV_PLUGINS_ROOT/$PLUGIN_NAME" ] && die "rbenv plugin $PLUGIN_NAME not found" 
+  \rm -rf "$RBENV_PLUGINS_ROOT/$PLUGIN_NAME" || die "Cannot delete rbenv plugin $1" >&2
   echo "Deleted rbenv plugin $1"
 }
 
