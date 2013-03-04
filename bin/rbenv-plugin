@@ -8,12 +8,12 @@ list() {
 add() {
   URL="$1"
   echo "$URL" | egrep -qs '^(git|http)' || URL="https://github.com/$URL"
-  NAME="$(echo $URL | sed 's/.*rbenv-\([^\.]*\).*/\1/;s/.*\(ruby-build\).*/ruby-build/')"  
+  NAME="$(echo $URL | sed 's/.*\(rbenv-[^\.]*\).*/\1/;s/.*\(ruby-build\).*/ruby-build/')"  
   if [ "$NAME" = "$URL" ]; then
     echo "Cannot detect plugin name" >&2
     exit 1
   fi
-  git clone "$URL" "$RBENV_ROOT/$NAME"
+  git clone "$URL" "$RBENV_ROOT/plugins/$NAME"
 }
 
 rm() {
