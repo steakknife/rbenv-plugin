@@ -33,7 +33,8 @@ rm() {
     echo "rbenv plugin $NAME not found" >&2
     exit 1
   fi
-  if ! rm -rf "$RBENV_PLUGINS_ROOT/$NAME"; then
+  rm -rf "$RBENV_PLUGINS_ROOT/$NAME"
+  if ! $?
     echo "Cannot delete rbenv plugin $1" >&2
     exit 1
   fi
