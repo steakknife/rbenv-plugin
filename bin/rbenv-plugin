@@ -2,7 +2,7 @@
 
 list() {
   echo "rbenv plugins:"
-  ls -1 "$RBENV_PLUGINS_ROOT" | tr '\n' '\0' | xargs -0 -n 1 basename | sed -e 's/^rbenv-//g;/^update$/d'
+  ls -1 "$RBENV_PLUGINS_ROOT" | tr '\n' '\0' | xargs -0 -n 1 basename | sed -e 's/^rbenv-//g;/^plugin$/d'
 }
 
 add() {
