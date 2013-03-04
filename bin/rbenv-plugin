@@ -2,13 +2,17 @@
 
 list() {
   echo "rbenv plugins:"
-  ls -1 "$RBENV_PLUGINS_ROOT" | tr '\n' '\0' | xargs -0 -n 1 basename | sed -e 's/^rbenv-//g'
+  ls -1 "$RBENV_PLUGINS_ROOT" | tr '\n' '\0' | xargs -0 -n 1 basename | sed -e 's/^rbenv-//g;/^update$/d'
 }
 
 add() {
   URL="$1"
   echo "$URL" | egrep -qs '^(git|http)' || URL="https://github.com/$URL"
-  NAME="$(echo $URL | sed 's/.*\(rbenv-[^\.]*\).*/\1/;s/.*\(ruby-build\).*/ruby-build/')"  
+  NAME="$(echo $URL | sed 's/.*\(rbenv-[^\.]*\).*/\1/;s/.*\(ruby-build\).*/ruby-build/')"
+  if [ "$NAME" = "update" ]; then
+    echo "Cannot overwrite update plugin" >&2
+    exit 1
+  fi
   if [ "$NAME" = "$URL" ]; then
     echo "Cannot detect plugin name" >&2
     exit 1
@@ -19,6 +23,10 @@ add() {
 rm() {
   NAME="$1"
   [ "$NAME" = 'ruby-build' ] || NAME="rbenv-$NAME"
+  if [ "$NAME" = "update" ]; then
+    echo "Cannot delete update plugin" >&2
+    exit 1
+  fi
   rm -rf "$RBENV_PLUGINS_ROOT/$NAME" || { echo "Cannot delete rbenv plugin $1" >&2 ; exit 1 }
   echo "Deleted rbenv plugin $1"
 }
