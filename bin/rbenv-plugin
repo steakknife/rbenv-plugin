@@ -24,9 +24,11 @@ rm() {
 }
 
 help() {
-  rbenv plugin list        list plugins
-  rbenv plugin add   url   add plugin  
-  rbenv plugin rm  plugin  remove plugin  
+  cat << EOF
+rbenv plugin list        list plugins
+rbenv plugin add   url   add plugin  
+rbenv plugin rm  plugin  remove plugin  
+EOF
 }
 
 COMMAND="$1" ; shift
