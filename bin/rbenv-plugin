@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh -ex
 
 list() {
   echo "rbenv plugins:"
@@ -30,10 +30,11 @@ rm() {
     exit 1
   fi
   if [ ! -d "$RBENV_PLUGINS_ROOT/$NAME" ]; then
+    echo "NAME=$NAME"
     echo "rbenv plugin $NAME not found" >&2
     exit 1
   fi
-  rm -rf "$RBENV_PLUGINS_ROOT/$NAME"
+  \rm -rf "$RBENV_PLUGINS_ROOT/$NAME"
   if ! $?; then
     echo "Cannot delete rbenv plugin $1" >&2
     exit 1
