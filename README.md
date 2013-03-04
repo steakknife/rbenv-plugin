@@ -1,12 +1,10 @@
 ## Description
 
-Manages rbenv plugins - add, list and remove. Only works on Ruby 1.9.
+Manages rbenv plugins - add, list and remove.  Works without any Ruby.
 
 ## Install
 
-    $ mkdir -p $RBENV_ROOT/plugins
-    $ git clone git://github.com/cldwalker/rbenv-plugin.git $RBENV_ROOT/plugins/rbenv-plugin
-    $ gem install boson
+    $ mkdir -p $RBENV_ROOT/plugins ; ( cd $RBENV_ROOT/plugins && git clone https://github.com/steakknife/rbenv-plugin.git )
 
 ## Usage
 
@@ -32,5 +30,4 @@ Manages rbenv plugins - add, list and remove. Only works on Ruby 1.9.
 
 ## Credits
 
-* Started on awesome @relevance fridays!
-* Thanks to pull requests from: @yb66
+* Your name here
